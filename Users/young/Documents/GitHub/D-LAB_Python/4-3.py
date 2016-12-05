@@ -1,8 +1,9 @@
+#!/usr/bin/python
 #分析電影
 #資料來源：IMDB電影資料集(https://www.kaggle.com/deepmatrix/imdb-5000-movie-dataset)
 #D-LAB Python X 使用者體驗設計 basic4 作業
 #輸入CSV檔名為：movie_metadata
-#輸出排序票房前五名的資料
+#輸出排序票房前10名的資料，統計演員及導演在資料集中的讚總數
 #學生：Feng jun yang (young)  教師：Mars
 #2016年12月1日
 
@@ -18,6 +19,16 @@ def list_to_dict(Li):
     for i in range(28):
         dct[column_name[i]] = Li[i]        
     return dct  
+
+#計算字典中的讚數，Li資料來源[{}{}...]
+#key演員，value哪位演員
+def count_likes(column_key,column_value):
+    likes = 0
+    for i in range(len(mov_data_set)):
+        if(mov_data_set[i][column_key] == column_value):
+            column_facebook_likes = column_key.replace('name','facebook_likes')
+            likes = likes + int(mov_data_set[i][column_facebook_likes])
+    return str(likes)
 
 
 #變數定義
@@ -48,18 +59,18 @@ for line in file:
 	#刪除第一行標題欄位
 del mov_data_set[0]
 
-for Ranking in range(5+1):
+for Ranking in range(9+1):
     mov_dic = sorted(mov_data_set,key=my_sort,reverse=True)[Ranking]
-    print(u'第'+str(Ranking+1) + u'名  票房：'  +  mov_dic['gross'])
+    print(u'第'+str(Ranking+1) + u'名：')
     print(u'電影名稱：' + mov_dic['movie_title'] )
     print(u'類型：' + mov_dic['genres'])
-    print(u'評分：' + mov_dic['imdb_score'] + u'成本：' + mov_dic['budget'])
-    print(u'演員一：' + mov_dic['actor_1_name']+ "  " + mov_dic['actor_1_facebook_likes'] +"個讚")
-    print(u'演員二：' + mov_dic['actor_2_name']+ "  " + mov_dic['actor_2_facebook_likes'] +"個讚")
-    print(u'演員三：' + mov_dic['actor_3_name']+ "  " + mov_dic['actor_3_facebook_likes'] +"個讚")
-    print(u'導演：' + mov_dic['director_name']+ "  " + mov_dic['director_facebook_likes'] +"個讚")
-
-
+    print(u'評分：' + mov_dic['imdb_score'] )
+    print(u'票房：' + mov_dic['gross'] + " / 成本：" + mov_dic['budget'])
+    print(u'演員一：' + mov_dic['actor_1_name']+ "  " + count_likes('actor_1_name',mov_dic['actor_1_name']) +"個讚")
+    print(u'演員二：' + mov_dic['actor_2_name']+ "  " + count_likes('actor_2_name',mov_dic['actor_2_name']) +"個讚")
+    print(u'演員三：' + mov_dic['actor_3_name']+ "  " + count_likes('actor_3_name',mov_dic['actor_3_name']) +"個讚")
+    print(u'演員總數臉書按讚：' + mov_dic['cast_total_facebook_likes']+ "個讚")
+    print(u'導演：' + mov_dic['director_name']+ "  " + count_likes('director_name',mov_dic['director_name']) +"個讚")
 #將全部紀錄寫入log_file檔中
 #log_file.write(str(sorted(mov_data_set,key=my_sort,reverse=True)[0]))
 
